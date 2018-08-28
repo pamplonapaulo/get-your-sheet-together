@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1" />    
+    
+    <!--[if lt IE 9]>
+    <script src="scripts/html5shiv.min.js"></script>
+    <script src="scripts/respond.js"></script>
+    <![endif]-->
+    
+    <title>Trello Clone</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    <link href="css/reset.css" rel="stylesheet" type="text/css">
+    
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+    
+</head>
+<body>
+   <div class="container">
+   
+       <div id="home-btn"><i class="material-icons">home</i></div>
+       
+       <div class="output">
+          
+          <ul id="boards">
+              <li class="newBoard-btn"><div><h6>new board</h6></div></li>
+              <li id="board-modal">
+                <h6>Creating a board</h6>
+                <p>What shall we call the board?</p>
+                <input type="text" data-js="board-title" maxlength="17"/>
+                <div>
+                    <button id="cancelBoardCreation-btn">cancel</button>
+                    <button id="createBoard-btn">create</button>    
+                </div>
+              </li>
+          </ul>
+          
+<!--
+          <ul class="lists" board-js="1">
+             <li class="list-namer">
+                <i class="material-icons">add_circle_outline</i>
+                <input type="text" data-js="list-title" placeholder="Name a new list" maxlength="17"/>
+             </li>
+          </ul>
+                    
+          <ul class="lists" board-js="2">
+             <li class="list-namer">
+                <i class="material-icons">add_circle_outline</i>
+                <input type="text" data-js="list-title" placeholder="Name a new list" maxlength="17"/>
+             </li>
+          </ul>                    
+                    
+          <ul class="lists" board-js="3">
+             <li class="list-namer">
+                <i class="material-icons">add_circle_outline</i>
+                <input type="text" data-js="list-title" placeholder="Name a new list" maxlength="17"/>
+             </li>
+          </ul>                    
+-->
+                    
+                     
+       </div>
+   </div>
+    <script type="application/javascript" src="scripts/main.js"></script>
+    
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+        function drop(ev, el) {
+          ev.preventDefault();
+          var data = ev.dataTransfer.getData("text");
+          el.appendChild(document.getElementById(data));
+        }
+    </script>    
+    
+    
+</body>
+</html>

@@ -1,0 +1,369 @@
+@import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:100,400,700,900');        
+
+
+body {
+    --yellow: rgb(242,233,127);
+    --pink: rgb(175,112,216);
+    --purple: rgb(94,84,154);
+    --darkpurple: rgb(68,40,115);
+    background: var(--pink);
+    font-family: 'Encode Sans Condensed', sans-serif;
+}
+.container {
+    color: var(--pink);            
+    position: relative;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    background: var(--purple);
+}
+#home-btn {
+    position: relative;
+    text-align: center;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 50px auto;
+    border-radius: 50%;
+    display: table;
+    cursor: pointer;
+    background: #ecd300; /* For browsers that do not support gradients */
+    background: -webkit-radial-gradient(hsl(54, 100%, 50%), hsl(54, 100%, 40%)); /* Safari 5.1 to 6.0 */
+    background: -o-radial-gradient(hsl(54, 100%, 50%), hsl(54, 100%, 40%)); /* For Opera 11.6 to 12.0 */
+    background: -moz-radial-gradient(hsl(54, 100%, 50%), hsl(54, 100%, 40%)); /* For Firefox 3.6 to 15 */
+    background: radial-gradient(hsl(54, 100%, 50%), hsl(54, 100%, 40%)); /* Standard syntax */
+    font-size: 1.4rem;
+    text-shadow: 0 -1px 0 #c3af07;
+    color: white;
+    border: solid 1px hsl(54, 100%, 20%);
+    z-index: 4;
+    outline: none;
+    box-shadow: inset 0 1px 0 hsl(54, 100%, 50%),
+              0 2px 0 hsl(54, 100%, 20%),
+              0 3px 0 hsl(54, 100%, 18%),
+              0 4px 0 hsl(54, 100%, 16%),
+              0 5px 0 hsl(54, 100%, 14%),
+              0 6px 0 hsl(54, 100%, 12%),
+              0 7px 0 hsl(54, 100%, 10%),
+              0 8px 0 hsl(54, 100%, 8%),
+              0 9px 0 hsl(54, 100%, 6%);
+}
+#home-btn:hover {
+    background: #ecd300; /* For browsers that do not support gradients */
+    background: -webkit-radial-gradient(hsl(54, 100%, 45%), hsl(54, 100%, 35%)); /* Safari 5.1 to 6.0 */
+    background: -o-radial-gradient(hsl(54, 100%, 45%), hsl(54, 100%, 35%)); /* For Opera 11.6 to 12.0 */
+    background: -moz-radial-gradient(hsl(54, 100%, 45%), hsl(54, 100%, 35%)); /* For Firefox 3.6 to 15 */
+    background: radial-gradient(hsl(54, 100%, 45%), hsl(54, 100%, 35%)); /* Standard syntax */
+}
+#home-btn:active {
+    background: #ecd300; /* For browsers that do not support gradients */
+    background: -webkit-radial-gradient(hsl(54, 100%, 43%), hsl(54, 100%, 33%)); /* Safari 5.1 to 6.0 */
+    background: -o-radial-gradient(hsl(54, 100%, 43%), hsl(54, 100%, 33%)); /* For Opera 11.6 to 12.0 */
+    background: -moz-radial-gradient(hsl(54, 100%, 43%), hsl(54, 100%, 33%)); /* For Firefox 3.6 to 15 */
+    background: radial-gradient(hsl(54, 100%, 43%), hsl(54, 100%, 33%)); /* Standard syntax */
+    top: 2px;
+    box-shadow: inset 0 1px 0 hsl(54, 100%, 50%),
+                0 2px 0 hsl(54, 100%, 20%),
+                0 3px 0 hsl(54, 100%, 18%),
+                0 4px 0 hsl(54, 100%, 16%),
+                0 5px 0 hsl(54, 100%, 14%),
+                0 6px 0 hsl(54, 100%, 12%),
+                0 7px 0 hsl(54, 100%, 10%);
+}
+#home-btn i {
+    position: relative;
+    font-size: 3rem;
+    -webkit-text-stroke: 1px var(--purple);
+    color: var(--pink);
+    display: table-cell;
+    vertical-align: middle;
+}
+#boards {
+    text-align: center;
+}
+#boards li {
+    position: relative;
+    background: #ccc;
+    border-radius: 7.5px;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.3);
+    width: 270px;
+    height: 100px;
+    cursor: pointer;
+    transition: all .3s;
+    display: inline-block;
+    text-align: center;            
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-shadow: 1px 1px 3px #000;
+    color: #FFFFFF;
+    margin: 15px 15px;
+}
+#boards li:hover {
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.6);
+    transform: scale(1.1);
+    transform-origin: 50% 50%;
+}    
+#boards li.newBoard-btn {
+    background: var(--yellow);
+    color: var(--pink);
+}
+#boards li div {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+#boards li h6 {
+    display: table-cell;
+    vertical-align: middle;
+}
+#boards li p {
+    font-size: .5rem;
+}
+#boards li#board-modal {
+    display: none;
+    height: 230px;
+    cursor: default;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
+
+}
+#boards li#board-modal:hover {
+    transform: scale(1);
+}
+#boards li#board-modal h6 {
+
+    display: block;
+    margin: 25px auto auto 25px;
+    color: var(--yellow);
+}
+#boards li#board-modal p {
+    margin: 25px auto auto 25px;
+    font-size: 16px;
+    font-weight: 400;
+}
+#boards li#board-modal input {
+    width: calc(100% - 70px);
+    height: 35px;
+    border-radius: 5px;
+    border-width: 0;
+    margin: 15px 25px auto 25px;
+    box-shadow: 0 3px 5px rgba(0,0,0,.6);
+    font-size: 1.5rem;
+    padding: 0 10px;
+}
+#boards li#board-modal button {
+    text-transform: uppercase;
+    width: 110px;
+    height: 40px;
+    margin-top: 25px;
+    cursor: pointer;
+    transition: all 0.5s;
+    border-width: 0;
+}
+#boards li#board-modal button:nth-child(1) {
+    margin-left: 25px;
+    background: #ccc;
+}
+#boards li#board-modal button:nth-child(2) {
+    float: right;
+    margin-right: 25px;
+    background: var(--yellow);
+}
+#boards li#board-modal button:nth-child(1):hover {
+    color: white;
+}
+#boards li#board-modal button:nth-child(2):hover {
+    color: white;
+    background: var(--pink);
+}        
+ul.lists {
+    margin-top: 50px;
+    width: 100%;
+    padding-top: 0;
+    display: none;
+}
+ul.lists > li {
+    background: #FFFF;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.3);
+    display: inline-block;
+    width: 275px;
+    margin: 10px;
+    vertical-align: top;
+}
+ul.lists > li.list-namer {
+    position: absolute;
+    background: white;
+    border-radius: 0;
+    background: rgba(255,255,255,0.3);
+    height: 85px;
+    top: 195px;
+    left: 327px
+}
+ul.lists > li.list-namer i {
+    background: var(--pink);
+    border-radius: 50%;
+    font-size: 25px;
+    transform: rotate(45deg);
+    color: var(--yellow);
+    float: right;
+    margin-top: -15px;
+    margin-right: -15px;
+    transition: all 0.3s;
+    text-shadow: 1px 1px 3px #000;
+}
+ul.lists > li.list-namer i:hover {
+    cursor: pointer;
+    transform: rotate(45deg) scale(1.2);
+}
+ul.lists > li.list-namer > input {
+    width: 235px;
+    margin: 5px 10px 12px 10px;
+    height: 55px;
+    border-radius: 5px;
+    border-width: 0;
+    box-shadow: 0 3px 5px rgba(0,0,0,.6);
+    font-size: 1.1rem;
+    padding: 0 10px;
+    background: rgba(255,255,255,0.3);
+
+}
+ul.lists > li.list-namer > input::placeholder {
+    color: lightgray;
+}
+ul.lists > li > div {
+    display: table;
+    width: 90%;
+    height: 100%;
+    height: 60px;
+    border-bottom: #ccc solid ;
+    border-width: thin;
+    margin: auto;
+    margin-bottom: 20px;
+}
+ul.lists > li > div > p {
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    font-weight: 900;
+    letter-spacing: 3px;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 3px #000;
+    color: darkgray;
+}
+ul.lists > li > input[data-js~="inputItemName"] {
+    width: 235px;
+    margin: auto 10px;
+    margin-bottom: 10px;
+    height: 55px;
+    border-radius: 5px;
+    border-width: 0;
+    box-shadow: 0 3px 5px rgba(0,0,0,.6);
+    padding: 0 10px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 3px #000;
+    color: darkgray;
+}
+ul.lists .items > li {
+    box-shadow: 0 0 6px 2px rgba(0,0,0,.3);
+    border-radius: 5px;
+    display: block;
+    background: var(--purple);
+    margin: 10px;
+    height: 60px;
+    padding-left: 10px;
+    cursor: pointer;
+    transition: all .2s;
+}
+ul.lists .items > li:hover {
+    transform: scale(1.035);
+    box-shadow: 0 0 6px 2px rgba(0,0,0,.6);
+}
+
+
+ul.lists .items li > div {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+ul.lists .items li > div > p {
+    display: table-cell;
+    vertical-align: middle;
+    color: rgba(255,255,255,.4);
+    text-shadow: 1px 1px 3px #000;
+    letter-spacing: 3px;
+    font-weight: 900;
+    font-size: 1.2rem;
+    padding-left: 10px;
+}
+ul.lists .items li > div > i.material-icons {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+    padding-right: 15px;
+    color: rgba(255,255,255,.3);
+    text-shadow: 1px 1px 3px #000;
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+
+
+/* drag
+
+.box {
+  height: 100px;
+  1width: 100px;
+  background-color: black;
+  position: relative;
+  top: 5px;
+  left: 5px;
+  cursor: pointer;
+}
+
+.held {
+  border: solid 10px red;
+  background-color: red;
+}
+
+.holder {
+  1height: 110px;
+  1width: 110px;
+  margin: 5px;
+  border: solid 5px black;
+  display: inline-block;
+}
+
+.hovered {
+  border: dotted 5px black;
+}
+
+.invisible {
+  display: none;
+}*/
