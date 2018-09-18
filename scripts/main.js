@@ -13,14 +13,8 @@
     $newBoardBtn.addEventListener('click', showTitleBoardAsker);            
     $createBoardBtn.addEventListener('click', createNewBoard);
     $cancelBoardBtn.addEventListener('click', hideTitleBoardAsker);
+    boardTitle.addEventListener('keyup', keyUpHandler(event), false);
     
-    boardTitle.addEventListener("keyup", function(event){
-        event.preventDefault();
-        if(event.keyCode === 13){
-            createNewBoard();
-        }
-    });    
-
     function showTitleBoardAsker(){
         $newBoardBtn.style.display = 'none';
         $boardModal.style.display = 'inline-block';
@@ -85,13 +79,13 @@
     
     function setNewListInput(board){
         var el = document.querySelector('[data-js="list-title"]');
-        el.addEventListener('keyup', keyUpNewListHanlder(event, board), false);
+        el.addEventListener('keyup', keyUpHandler(event, board), false);
     }
     
     function setNewItemInput(board, list){
         var el = document.querySelector('#board-'+board+'-list-'+list+'');
         var listFirstSibiling = el.parentElement.childNodes[1];
-        listFirstSibiling.addEventListener('keyup', keyUpNewItemHanlder(event, el, board, list), false);
+        listFirstSibiling.addEventListener('keyup', keyUpHandler(event, board, list, el), false);
     }
             
     function List(name, board){
@@ -120,8 +114,8 @@
         ul.setAttribute('class', 'items');
         ul.setAttribute('id', 'board-' + board + '-list-' + list);
         
-        ul.addEventListener('drop', dropHanlder(event, ul), false);
-        ul.addEventListener('dragover', allowDropHanlder(event), false);
+        ul.addEventListener('drop', dropHandler(event, ul), false);
+        ul.addEventListener('dragover', allowDropHandler(event), false);
         
         p.innerText = name;
         li.appendChild(div);
@@ -134,7 +128,7 @@
         createListObj((board), name);
     }
     
-    function dropHanlder(e, el){
+    function dropHandler(e, el){
         return function (e){
           e.preventDefault();
           var data = e.dataTransfer.getData("text");
@@ -142,34 +136,36 @@
         }
     }
 
-    function allowDropHanlder(e){
+    function allowDropHandler(e){
         return function (e){
           e.preventDefault();
         }
     }
     
-    function dragHanlder(e){
+    function dragHandler(e){
         return function (e){
             e.dataTransfer.setData("text", e.target.id);
         }
     }
     
-    function keyUpNewItemHanlder(e, el, board, list){
-        return function (e){
-            e.preventDefault();
-            if(e.keyCode === 13){
-                buildNewItem(el, board, list, this.value);
-                this.value = "";
-            }
-        }
-    }
+    function keyUpHandler(e, board, list, el){
+        
+        var arg = arguments.length;
     
-    function keyUpNewListHanlder(e, board){
         return function (e){
             e.preventDefault();
             if(e.keyCode === 13){
-                buildNewList(board, this.value, this.parentElement);
-                this.value = ""; 
+                
+                if(arg == 1)
+                    return createNewBoard();                
+                
+                if(arg == 2)
+                    buildNewList(board, this.value, this.parentElement);
+                
+                if(arg == 4)
+                    buildNewItem(el, board, list, this.value);
+                
+                this.value = "";
             }
         }
     }
@@ -193,7 +189,7 @@
         li.setAttribute('ondrop', 'return false');
         li.setAttribute('ondragover', 'return false');
         
-        li.addEventListener('dragstart', dragHanlder(event), false);
+        li.addEventListener('dragstart', dragHandler(event), false);
         
         i.setAttribute('class', 'material-icons');
         i.innerText = 'add_circle_outline';
