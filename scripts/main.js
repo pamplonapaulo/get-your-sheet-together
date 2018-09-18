@@ -66,12 +66,12 @@
     }
 
     function selectBoard(){
-                
-        for (var i=0; i<$arrBoards.length; i++){
-            hide(document.querySelector('[data-js="' + (i) + '"]'));
-        }
         
         var selected = event.target.parentElement.parentElement;
+                        
+        $arrBoards.forEach(function(element, index) {
+          hide(document.querySelector('[data-js="' + index + '"]'));
+        });
         selected.style.display = 'inline-block';
         selected.style.float = 'left';
         hide($newBoardBtn);
@@ -84,13 +84,14 @@
     }
     
     function setNewListInput(board){
-        document.querySelector('[data-js="list-title"]').addEventListener("keyup", function(event) {
-            event.preventDefault();
-            if (event.keyCode === 13){
-                buildNewList(board, this.value, this.parentElement);
-                this.value = ""; 
-            }
-        });        
+        var el = document.querySelector('[data-js="list-title"]');
+        el.addEventListener('keyup', keyUpNewListHanlder(event, board), false);
+    }
+    
+    function setNewItemInput(board, list){
+        var el = document.querySelector('#board-'+board+'-list-'+list+'');
+        var listFirstSibiling = el.parentElement.childNodes[1];
+        listFirstSibiling.addEventListener('keyup', keyUpNewItemHanlder(event, el, board, list), false);
     }
             
     function List(name, board){
@@ -101,114 +102,87 @@
         this.id = board.lists.length;
     }
     
-    function buildNewList(board, listName, boardHeader){
+    function buildNewList(board, name, boardHeader){
                 
         var list = $arrBoards[board].lists.length; 
-        
-        listHTMLBuilder(board, list, listName, boardHeader);
-        
-        createListObj((board), listName);
-        
         var li = document.createElement("li");
         var div = document.createElement("div");
         var p = document.createElement("p");
         var input = document.createElement("input");
         var ul = document.createElement("ul");
         
-        p.innerText = listName;
-        
         input.setAttribute('type', 'text');
-        input.setAttribute('data-js', 'inputItemName board');
         input.setAttribute('maxlength', '17');
         input.setAttribute('ondrop', 'return false');
         input.setAttribute('ondragover', 'return false');
+        input.setAttribute('data-js', 'inputItemName board' + board + '-list' + list);
         
         ul.setAttribute('class', 'items');
         ul.setAttribute('id', 'board-' + board + '-list-' + list);
         
-        ul.addEventListener("drop", function drop(event) {
-              event.preventDefault();
-              var data = event.dataTransfer.getData("text");
-              ul.appendChild(document.getElementById(data));
-            }, false);
+        ul.addEventListener('drop', dropHanlder(event, ul), false);
+        ul.addEventListener('dragover', allowDropHanlder(event), false);
         
-        ul.addEventListener("dragover", function allowDrop(event) {
-                event.preventDefault();
-            }, false);
-        
+        p.innerText = name;
         li.appendChild(div);
         div.appendChild(p);
         li.appendChild(input);
         li.appendChild(ul);
-        
         boardHeader.parentElement.appendChild(li);
         
         setNewItemInput(board, list);
+        createListObj((board), name);
     }
     
-    function listHTMLBuilder(board, list, listName, boardHeader){
-        
-        var node = document.createElement("LI");
-        
-        var titleDIV = document.createElement("DIV");
-        var titleParagraph = document.createElement("P");
-        var textNode = document.createTextNode(listName);
-        titleParagraph.appendChild(textNode);
-        titleDIV.appendChild(titleParagraph);
-        node.appendChild(titleDIV);
-        
-        var itemsInput = document.createElement("INPUT");
-        itemsInput.setAttribute("type", "text");
-        itemsInput.setAttribute("maxlength", "17");
-        itemsInput.setAttribute("ondrop", "return false");
-        itemsInput.setAttribute("ondragover", "return false");
-        itemsInput.setAttribute("data-js", "inputItemName board" + board + "-list" + list);
-        node.appendChild(itemsInput);
-        
-        var itemsUL = document.createElement("UL");
-        itemsUL.setAttribute("class", "items");
-        itemsUL.setAttribute("data-js", "board-" + board + "-list-" + list);
-        
-        itemsUL.addEventListener("drop", function drop(ev, el) {
-              ev.preventDefault();
-              var data = ev.dataTransfer.getData("text");
-              el.appendChild(document.getElementById(data));
-            }, false);
-        
-        itemsUL.addEventListener("dragover", function allowDrop(ev) {
-                ev.preventDefault();
-            }, false);
-        
-        node.appendChild(itemsUL);
+    function dropHanlder(e, el){
+        return function (e){
+          e.preventDefault();
+          var data = e.dataTransfer.getData("text");
+          el.appendChild(document.getElementById(data));
+        }
     }
 
+    function allowDropHanlder(e){
+        return function (e){
+          e.preventDefault();
+        }
+    }
+    
+    function dragHanlder(e){
+        return function (e){
+            e.dataTransfer.setData("text", e.target.id);
+        }
+    }
+    
+    function keyUpNewItemHanlder(e, el, board, list){
+        return function (e){
+            e.preventDefault();
+            if(e.keyCode === 13){
+                buildNewItem(el, board, list, this.value);
+                this.value = "";
+            }
+        }
+    }
+    
+    function keyUpNewListHanlder(e, board){
+        return function (e){
+            e.preventDefault();
+            if(e.keyCode === 13){
+                buildNewList(board, this.value, this.parentElement);
+                this.value = ""; 
+            }
+        }
+    }
+    
     function createListObj(boardIndex, listTitle){
         var board = $arrBoards[boardIndex];
         var newList = new List(listTitle, board);
         board.lists.push(newList);
     }
     
-    function setNewItemInput(board, list){
-        var listElement = document.querySelector('#board-'+board+'-list-'+list+'');
-                
-        var listFirstSibiling = listElement.parentElement.childNodes[1];
-                
-        listFirstSibiling.addEventListener("keyup", function(event){
-            event.preventDefault();
-            if(event.keyCode === 13){
-                                
-                buildNewItem(listElement, board, list, this.value);
-                this.value = "";
-            }
-        });
-    }
-    
     function buildNewItem(listElement, board, list, name){
                         
         var item = $arrBoards[board].lists[list].items.length;
-        
-        createItemObj(name, board, list);
-        
         var li = document.createElement('li');        
         var div = document.createElement('div');        
         var p = document.createElement('p');  
@@ -219,23 +193,21 @@
         li.setAttribute('ondrop', 'return false');
         li.setAttribute('ondragover', 'return false');
         
-        li.addEventListener("dragstart", function drag(ev) {
-                ev.dataTransfer.setData("text", ev.target.id);
-            }, false);
+        li.addEventListener('dragstart', dragHanlder(event), false);
         
         i.setAttribute('class', 'material-icons');
         i.innerText = 'add_circle_outline';
         
         p.innerText = name;
-                
         div.appendChild(p);
         div.appendChild(i);
         li.appendChild(div);
         listElement.appendChild(li);
+        
+        createItemObj(name, board, list);
     }
     
     function createItemObj(name, board, list){
-                
         var newItem = new Item(name, $arrBoards[board].lists[list], $arrBoards[board]);
         $arrBoards[board].lists[list].items.push(newItem);
     }
@@ -266,26 +238,23 @@
     }
     
     function hideAllLists(){
-        var allLists = document.querySelectorAll('.lists');        
-        
-        for (var i=0; i<allLists.length; i++){
-            allLists[i].style.display = 'none';    
-        }
+        var allLists = document.querySelectorAll('.lists'); 
+        allLists.forEach(function(element) {
+          element.style.display = 'none';
+        });
     }
     
     function showAllBoards(){
-        for (var i=0; i<$arrBoards.length; i++){
-            show(document.querySelector('[data-js="' + i + '"]'));
-        }
+        $arrBoards.forEach(function(element, index) {
+          show(document.querySelector('[data-js="' + index + '"]'));
+        });
     }
     
     function resetFloat(){
         var allBoards = document.querySelectorAll('.board');
-        
-        for (var i=0; i<allBoards.length; i++){
-            allBoards[i].style.float = 'none';    
-        }
+        allBoards.forEach(function(element) {
+            element.style.float = 'none';    
+        });
     }
     
 })();
-    
