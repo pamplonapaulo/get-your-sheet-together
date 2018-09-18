@@ -102,22 +102,90 @@
     }
     
     function buildNewList(board, listName, boardHeader){
-        
-        
+                
         var list = $arrBoards[board].lists.length; 
+        
+        listHTMLBuilder(board, list, listName, boardHeader);
         
         createListObj((board), listName);
         
-        boardHeader.insertAdjacentHTML("afterend", '<li><div><p>' + listName + '</p></div><input type="text" data-js="inputItemName board' + board + '-list' + list + '" maxlength="17" ondrop="return false" ondragover="return false"/><ul class="items" id="board-' + board + '-list-' + list + '" ondrop="drop(event, this)" ondragover="allowDrop(event)"></ul></li>');
+        var li = document.createElement("li");
+        var div = document.createElement("div");
+        var p = document.createElement("p");
+        var input = document.createElement("input");
+        var ul = document.createElement("ul");
+        
+        p.innerText = listName;
+        
+        input.setAttribute('type', 'text');
+        input.setAttribute('data-js', 'inputItemName board');
+        input.setAttribute('maxlength', '17');
+        input.setAttribute('ondrop', 'return false');
+        input.setAttribute('ondragover', 'return false');
+        
+        ul.setAttribute('class', 'items');
+        ul.setAttribute('id', 'board-' + board + '-list-' + list);
+        
+        ul.addEventListener("drop", function drop(event) {
+              event.preventDefault();
+              var data = event.dataTransfer.getData("text");
+              ul.appendChild(document.getElementById(data));
+            }, false);
+        
+        ul.addEventListener("dragover", function allowDrop(event) {
+                event.preventDefault();
+            }, false);
+        
+        li.appendChild(div);
+        div.appendChild(p);
+        li.appendChild(input);
+        li.appendChild(ul);
+        
+        boardHeader.parentElement.appendChild(li);
         
         setNewItemInput(board, list);
     }
     
+    function listHTMLBuilder(board, list, listName, boardHeader){
+        
+        var node = document.createElement("LI");
+        
+        var titleDIV = document.createElement("DIV");
+        var titleParagraph = document.createElement("P");
+        var textNode = document.createTextNode(listName);
+        titleParagraph.appendChild(textNode);
+        titleDIV.appendChild(titleParagraph);
+        node.appendChild(titleDIV);
+        
+        var itemsInput = document.createElement("INPUT");
+        itemsInput.setAttribute("type", "text");
+        itemsInput.setAttribute("maxlength", "17");
+        itemsInput.setAttribute("ondrop", "return false");
+        itemsInput.setAttribute("ondragover", "return false");
+        itemsInput.setAttribute("data-js", "inputItemName board" + board + "-list" + list);
+        node.appendChild(itemsInput);
+        
+        var itemsUL = document.createElement("UL");
+        itemsUL.setAttribute("class", "items");
+        itemsUL.setAttribute("data-js", "board-" + board + "-list-" + list);
+        
+        itemsUL.addEventListener("drop", function drop(ev, el) {
+              ev.preventDefault();
+              var data = ev.dataTransfer.getData("text");
+              el.appendChild(document.getElementById(data));
+            }, false);
+        
+        itemsUL.addEventListener("dragover", function allowDrop(ev) {
+                ev.preventDefault();
+            }, false);
+        
+        node.appendChild(itemsUL);
+    }
+
     function createListObj(boardIndex, listTitle){
         var board = $arrBoards[boardIndex];
         var newList = new List(listTitle, board);
         board.lists.push(newList);
-        
     }
     
     function setNewItemInput(board, list){
@@ -141,18 +209,35 @@
         
         createItemObj(name, board, list);
         
-        var html = '<li id="B' + board + '_L' + list + '_I' + item + '" draggable="true" ondragstart="drag(event)" ondrop="return false" ondragover="return false"><div><p>' + name + '</p><i class="material-icons">add_circle_outline</i></div></li>';
+        var li = document.createElement('li');        
+        var div = document.createElement('div');        
+        var p = document.createElement('p');  
+        var i = document.createElement('i');   
+        
+        li.setAttribute('id', 'B'+ board + '_L' + list + '_I' + item);
+        li.setAttribute('draggable', 'true');
+        li.setAttribute('ondrop', 'return false');
+        li.setAttribute('ondragover', 'return false');
+        
+        li.addEventListener("dragstart", function drag(ev) {
+                ev.dataTransfer.setData("text", ev.target.id);
+            }, false);
+        
+        i.setAttribute('class', 'material-icons');
+        i.innerText = 'add_circle_outline';
+        
+        p.innerText = name;
                 
-        console.log(listElement);
-        console.dir(listElement);
-        listElement.innerHTML += html;
+        div.appendChild(p);
+        div.appendChild(i);
+        li.appendChild(div);
+        listElement.appendChild(li);
     }
     
     function createItemObj(name, board, list){
                 
         var newItem = new Item(name, $arrBoards[board].lists[list], $arrBoards[board]);
         $arrBoards[board].lists[list].items.push(newItem);
-        
     }
     
     function Item(name, list, board){
@@ -202,23 +287,5 @@
         }
     }
     
-    
-    
-//    Drag & Drop:
-    
-    function allowDrop(ev) {
-        ev.preventDefault();
-    }
-
-    function drag(ev) {
-        ev.dataTransfer.setData("text", ev.target.id);
-    }
-    
-    function drop(ev, el) {
-      ev.preventDefault();
-      var data = ev.dataTransfer.getData("text");
-      el.appendChild(document.getElementById(data));
-    }
-            
 })();
     
