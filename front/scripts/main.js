@@ -95,11 +95,8 @@
         return Object.prototype.toString.call(obj);
     }
     
-
     function selectBoard(){
-        
         var selected = event.target.parentElement.parentElement;
-                        
         $arrBoards.forEach(function(element, index) {
           hide(document.querySelector('[data-js="' + index + '"]'));
         });
@@ -131,20 +128,16 @@
         input.setAttribute('ondrop', 'return false');
         input.setAttribute('ondragover', 'return false');
         input.setAttribute('data-js', 'inputItemName board' + board + '-list' + list);
-        
         ul.setAttribute('class', 'items');
         ul.setAttribute('id', 'board-' + board + '-list-' + list);
-        
         ul.addEventListener('drop', dropHandler(event, ul), false);
         ul.addEventListener('dragover', allowDropHandler(event), false);
-        
         p.innerText = name;
         li.appendChild(div);
         div.appendChild(p);
         li.appendChild(input);
         li.appendChild(ul);
         boardHeader.parentElement.appendChild(li);
-        
         listenerSetter(board, list);
     }
     
@@ -152,9 +145,7 @@
         return function (e){
           e.preventDefault();
           var data = e.dataTransfer.getData("text");
-            
           el.appendChild(document.getElementById(data));
-            
           fixChanges(el, data);
         }
     }
@@ -170,36 +161,38 @@
             e.dataTransfer.setData("text", e.target.id);
         }
     }
-        
+            
     function fixChanges(listElement, itemID){
         var spot = listElement.id;
         var listID = spot.replace(/board-(\d+)-list-(\d+)/g, '$2');
         var boardID = spot.replace(/board-(\d+)-list-(\d+)/g, '$1');
-        var itemOnDrag = document.getElementById(itemID);
-        var itemNumber = itemID.replace(/B(\d+)_L(\d+)_I(\d+)/g, '$3');
-        var originalList = itemID.replace(/B(\d+)_L(\d+)_I(\d+)/g, '$2');
-        resetItemIDs($arrBoards[boardID].lists[listID].items, boardID, listID, originalList, itemNumber);        
-    }
-    
-    function resetItemIDs(array, boardID, listID, originalList, originalItemIndex){
-                        
+        var originalItemIndex = itemID.replace(/B(\d+)_L(\d+)_I(\d+)/g, '$3');
+        var originalList = itemID.replace(/B(\d+)_L(\d+)_I(\d+)/g, '$2');        
+        var finalItemArray = $arrBoards[boardID].lists[listID].items;
         var originalItemArray = $arrBoards[boardID].lists[originalList].items;
         var parentWrapper = document.getElementById('board-' + boardID + '-list-' + listID + '');
-        moveItemBetweenListArrays(array, pickItemFromArray(originalItemArray, originalItemIndex));
         
-        for (var i=0; i<array.length; i++){
-            array[i].id = i;
-            array[i].listID = listID;
-            array[i].listName = $arrBoards[boardID].lists[listID].title;
-            parentWrapper.childNodes[i].setAttribute('id', 'B' + boardID + '_L' + listID + '_I' + i);
-        }
+        moveItemBetweenListArrays(finalItemArray, pickItemFromArray(originalItemArray, originalItemIndex));
+        updateIDs(finalItemArray, boardID, listID, parentWrapper);
+        updateIDs(originalItemArray, boardID);
+    }
+            
+    function updateIDs(itemArray, boardIndex, listIndex, wrapper){
         
-        for (var i=0; i<originalItemArray.length; i++){
-            originalItemArray[i].id = i;
-            var list = originalItemArray[i].listID;
-            var wrapper = document.getElementById('board-' + boardID + '-list-' + list + '');
-            wrapper.childNodes[i].setAttribute('id', 'B' + boardID + '_L' + list + '_I' + i);
-        }
+            for (var i=0; i<itemArray.length; i++){
+                
+                itemArray[i].id = i;
+                
+                if(arguments.length === 4){ 
+                    itemArray[i].listID = listIndex;
+                    itemArray[i].listName = $arrBoards[boardIndex].lists[listIndex].title;
+                   }
+                if(arguments.length === 2){ 
+                    var listIndex = itemArray[i].listID;
+                    var wrapper = document.getElementById('board-' + boardIndex + '-list-' + listIndex + '');
+                   }
+                wrapper.childNodes[i].setAttribute('id', 'B' + boardIndex + '_L' + listIndex + '_I' + i);
+            }
     }
     
     function pickItemFromArray(arrayOrigin, index){
@@ -270,35 +263,32 @@
     }
     
     
-    function hide(element){
-        element.style.display = 'none';
-    }
-    
-    function show(element){
-        element.style.display = 'inline-block';
-    }
-    
     function goHomePage(){
         saveBoards();
-        hideAllLists();
+        hide();
         show($newBoardBtn);
-        showAllBoards();
+        show();
         resetFloat();
     }
     
-    function hideAllLists(){
-        var allLists = document.querySelectorAll('.lists'); 
-        allLists.forEach(function(element) {
-          element.style.display = 'none';
-        });
+    function hide(element){
+        if(arguments.length === 1)
+            element.style.display = 'none';
+        if(arguments.length === 0)
+            document.querySelectorAll('.lists').forEach(function(element) {
+              element.style.display = 'none';
+            });
     }
-    
-    function showAllBoards(){
-        $arrBoards.forEach(function(element, index) {
-          show(document.querySelector('[data-js="' + index + '"]'));
-        });
+        
+    function show(element){
+        if(arguments.length === 1)
+            element.style.display = 'inline-block';
+        if(arguments.length === 0)
+            $arrBoards.forEach(function(element, index) {
+              document.querySelector('[data-js="' + index + '"]').style.display = 'inline-block';
+            });            
     }
-    
+        
     function resetFloat(){
         var allBoards = document.querySelectorAll('.board');
         allBoards.forEach(function(element) {
@@ -352,7 +342,5 @@
             });        
         }
     }
-    
     loadBoards();
-            
 })();
