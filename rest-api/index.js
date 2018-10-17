@@ -5,32 +5,72 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 var app = express();
 var port = process.env.PORT || 3000;
-var data = [];
+
+var usersArray = [];
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/boards', function(req, res) {
-    
-    data = [];
-    
-    var content = req.body;
+// createUser(window.user):
+app.post('/', function(req, res) {
+            
+    var matchFound = usersArray.some(hasExistingUser);
+
+    function hasExistingUser(value, index, array) {        
+        if (array[index].id === req.body.id){
+            return array[index].id === req.body.id;
+        }            
+    }
         
-    //console.log(req.body);
-    console.log('número de boards: ' + req.body.length);
+    if (!matchFound){
+        usersArray.push({
+            index: usersArray.length,
+            boards: [],
+            id: req.body.id,
+            name: req.body.name
+        });
+        console.log('!matchFound');
+        console.log('usersArray: ' + usersArray);
+    }
     
-    content.forEach(function(element) {
-        data.push(element);
-    });
-    data.forEach(function(element) {
-        console.log(element);
-    });
+    matchFound = [];
     
+    res.json({ message: 'success' });
 });
 
-app.get('/boards', function(req, res) {
-  res.json(data);
+// loadUserData(user):
+app.get('/user/:id', function(req, res){
+
+    var hasUser = usersArray.some(function(user){
+        return user.id === req.params.id;
+    });
+    
+    if(hasUser) {
+        
+        return res.json(usersArray.filter(function(user){
+            return user.id === req.params.id;
+        })[0]);    
+    /*  usersArray.forEach(function(user) {            
+            if(user.id === req.params.id){
+                return res.json(user);
+            }
+        });*/
+        
+    }
+    res.status(404).json({ error: 'Usuário não encontrado' });
+});
+
+// saveUserData():
+app.post('/boards', function(req, res) {
+    
+    usersArray[req.body.index].boards = [];
+    
+    var boardsOnTransfer = req.body.boards;
+            
+    boardsOnTransfer.forEach(function(element) {
+        usersArray[req.body.index].boards.push(element);
+    });    
 });
 
 app.listen(port, function() {

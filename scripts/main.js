@@ -8,8 +8,11 @@
     var $cancelBoardBtn = document.querySelector('#cancelBoardCreation-btn');
     var boardTitle = document.querySelector('input[data-js="board-title"]');
     var $homeBtn = document.querySelector('#home-btn');
+    var $saveBtn = document.querySelector('#save-btn');
     
-    $homeBtn.addEventListener('click', goHomePage);            
+    $homeBtn.addEventListener('click', goHomePage); 
+    $saveBtn.addEventListener('click', saveUserData); 
+    
     $newBoardBtn.addEventListener('click', showTitleBoardAsker);            
     $createBoardBtn.addEventListener('click', createNewBoard);
     $cancelBoardBtn.addEventListener('click', hideTitleBoardAsker);
@@ -43,7 +46,51 @@
         $boardModal.style.display = 'inline-block';
         boardTitle.focus();
     }
-
+    
+    function createUser(user){
+        var post = new XMLHttpRequest();
+        post.open('POST', 'http://localhost:3000/');
+        post.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        post.send('id='+user.id+
+                  '&name='+user.name);
+        post.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              loadUserData(user);    
+          }
+        };        
+    }
+    
+    function loadUserData(user){
+        var userData = [];
+        var get = new XMLHttpRequest();
+        get.open('GET', 'http://localhost:3000/user/' + user.id);
+        get.send();
+        get.onreadystatechange = function(e) {
+            if (get.readyState === 4) {
+                userData = JSON.parse(get.responseText);
+                window.user.index = userData.index;
+                userData.boards.forEach(function(element) {
+                    $arrBoards.push(element);
+                    buildBoard(element);
+                    buildHiddenHTML(element);
+                });
+            }
+        };
+    }
+            
+    function saveUserData(){
+        var userData = {
+            index: window.user.index,
+            boards: $arrBoards,
+            id: window.user.id,
+            name: window.user.name
+        }
+        var ajax = new XMLHttpRequest();
+        ajax.open('POST', 'http://localhost:3000/boards');
+        ajax.setRequestHeader('Content-Type', 'application/json');
+        ajax.send(JSON.stringify(userData));
+    } 
+    
     function hideTitleBoardAsker(){
         $newBoardBtn.style.display = 'inline-block';
         $boardModal.style.display = 'none';
@@ -64,13 +111,11 @@
     
     function buildBigBoardButton(board){
         $boardModal.insertAdjacentHTML("afterend", '<li class="board" data-js="' + board.id + '"><div><h6>' + board.title + '</h6></div></li>');
-        
         listenerSetter(board);
     }
     
     function buildBoardHeader(board){
         $boardModal.parentElement.insertAdjacentHTML("afterend", '<ul class="lists" board-js="' + board.id + '"><li class="list-namer"><i class="material-icons">add_circle_outline</i><input type="text" data-js="list-title" placeholder="Name a new list" maxlength="17"/></li></ul>');
-        
         listenerSetter(board.id);
     }
     
@@ -262,9 +307,7 @@
         $arrBoards[board].lists[list].items.push(newItem);
     }
     
-    
     function goHomePage(){
-        saveBoards();
         hide();
         show($newBoardBtn);
         show();
@@ -295,31 +338,7 @@
             element.style.float = 'none';    
         });
     }
-    
-    function saveBoards(){
-        var ajax = new XMLHttpRequest();
-        ajax.open('POST', 'http://localhost:3000/boards');
-        ajax.setRequestHeader('Content-Type', 'application/json');
-        ajax.send(JSON.stringify($arrBoards));
-    }
-    
-    function loadBoards(){
-        var boardsOnServer = [];
-        var get = new XMLHttpRequest();
-        get.open('GET', 'http://localhost:3000/boards');
-        get.send();
-        get.onreadystatechange = function(){
-            if (get.readyState === 4) {
-                boardsOnServer = JSON.parse(get.responseText);
-                boardsOnServer.forEach(function(element) {
-                    $arrBoards.push(element);
-                    buildBoard(element);
-                    buildHiddenHTML(element);
-                });
-            }
-        };
-    }
-    
+        
     function buildHiddenHTML(board){
         if (board.lists.length > 0){
             rebuildLists(board);
@@ -342,5 +361,65 @@
             });        
         }
     }
-    loadBoards();
+    
+    
+    
+    // FACEBOOK LOGIN * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    document.getElementById('loginBtn').addEventListener('click', function() {
+        //do the login
+        FB.login(function(response) {
+            if (response.authResponse) {
+            //user just authorized your app
+            checkLoginState();
+            }
+        }, {scope: 'public_profile,email', return_scopes: true});
+    }, false);       
+
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '2112343138809750',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v2.8'
+        });
+        FB.AppEvents.logPageView();   
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+    }        
+
+    function statusChangeCallback(response) {          
+        if (response.status === 'connected') {
+        runApp();
+        } else {
+        document.getElementById('status').innerHTML = 'Please log into this app.';
+        }
+    }
+
+    function runApp() {
+        FB.api('/me', function(response) {
+            window.user = response;
+            updateLayout();
+            createUser(window.user);
+        });
+    }
+
+    function updateLayout(){
+        document.getElementById('user-name').innerHTML = window.user.name;
+        document.querySelector('#image-wrapper').style.display = 'none';
+        document.querySelector('.output').style.display = 'block';
+    }
+    
 })();

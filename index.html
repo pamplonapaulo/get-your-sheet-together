@@ -2,29 +2,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <meta charset="UTF-8">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1" />    
-    
     <!--[if lt IE 9]>
     <script src="scripts/html5shiv.min.js"></script>
     <script src="scripts/respond.js"></script>
     <![endif]-->
-    
     <title>Trello Clone</title>
-    
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    
     <link href="css/reset.css" rel="stylesheet" type="text/css">
-    
     <link href="css/main.css" rel="stylesheet" type="text/css">
-    
 </head>
 <body>
-   <div class="container">
    
-       <div id="home-btn"><i class="material-icons">home</i></div>
-       
-       <div class="output">
+         <header>
+            
+            <div class="wrapper">
+                                
+                <div id="home-btn" class="btn"><i class="material-icons">home</i></div>    
+
+                <div id="save-btn" class="btn"><i class="material-icons">save</i></div>
+                
+                <div id="user-name"></div>
+
+            </div>
+             
+         </header>   
+   
+    <div class="container">
+        
+        <div id="image-wrapper">
+          
+            <button id="loginBtn" type="button" name="button" class="facebook-style-btn facebook-style-dark"><img id="fb-icon" src="assets/fb-icon.svg" alt="facebook icon" />Login with Facebook</button><!--Facebook icon made by Freepik from www.flaticon.com-->
+            
+        </div>
+         
+        <div class="output">
           
           <ul id="boards">
               <li class="newBoard-btn"><div><h6>new board</h6></div></li>
@@ -41,6 +53,7 @@
                      
        </div>
    </div>
+   
     <script type="application/javascript" src="scripts/main.js"></script>
     
 </body>
